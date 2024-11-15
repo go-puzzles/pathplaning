@@ -29,7 +29,7 @@ func (g *SimpleAstarGraph) Heuristic(from, to Point) int {
 }
 
 type priorityPoint struct {
-	Point
+	point    Point
 	priority int
 }
 
@@ -76,7 +76,7 @@ func AstarSearch(graph AstarGraph, start, goal Point) ([]Point, error) {
 		}
 
 		popItem, _ := queue.Dequeue()
-		current := popItem.Point
+		current := popItem.point
 
 		if current.Equals(goal) {
 			path := []Point{}
