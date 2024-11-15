@@ -10,6 +10,7 @@ package pathplaning
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/go-puzzles/puzzles/pqueue"
 )
@@ -36,6 +37,10 @@ func (p *priorityPoint) Priority() int {
 	return p.priority
 }
 
+func pointKey(p Point) string {
+	return fmt.Sprintf("%d,%d", p.GetX(), p.GetY())
+}
+
 func AstarSearch(graph AstarGraph, start, goal Point) ([]Point, error) {
 	if !graph.IsPointReachable(goal) {
 		return nil, errors.New("goal point not reachable")
@@ -50,8 +55,8 @@ func AstarSearch(graph AstarGraph, start, goal Point) ([]Point, error) {
 	}
 
 	cameFrom := make(map[Point]Point)
-	pointCost := make(map[Point]int)
-	pointCost[start] = 0
+	pointCost := make(map[string]int)
+	pointCost[pointKey(start)] = 0
 
 	queue := pqueue.NewPriorityQueue[*priorityPoint](pqueue.WithPriorityMode(1))
 	queue.Enqueue(&priorityPoint{start, 0})
@@ -84,10 +89,11 @@ func AstarSearch(graph AstarGraph, start, goal Point) ([]Point, error) {
 		}
 
 		for _, next := range graph.Neighbors(current) {
-			newCost := pointCost[current] + graph.Cost(current, next)
-			if _, exists := pointCost[next]; !exists || newCost < pointCost[next] {
+			newCost := pointCost[pointKey(current)] + graph.Cost(current, next)
+			if oldCost, exists := pointCost[pointKey(next)]; !exists || newCost < oldCost {
+
 				cameFrom[next] = current
-				pointCost[next] = newCost
+				pointCost[pointKey(next)] = newCost
 				priority := newCost + graph.Heuristic(next, goal)
 
 				queue.Enqueue(&priorityPoint{next, priority})
