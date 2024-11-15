@@ -10,12 +10,13 @@ package pathplaning
 
 type Graph interface {
 	Neighbors(p Point) []Point
+	IsPointReachable(p Point) bool
 	IsInGraph(p Point) bool
 	IsBlocked(p Point) bool
 	SetBlock(p Point)
 	IsVisited(p Point) bool
 	SetVisited(p Point)
-	GetEdgeWeight(from, to Point) int
+	Cost(from, to Point) int
 }
 
 var (
@@ -41,13 +42,17 @@ func NewSimpleGraph(width, height int) *SimpleGraph {
 func (g *SimpleGraph) Neighbors(p Point) []Point {
 	var neighbors []Point
 	for _, dir := range directions {
-		newPoint := p.Shift(dir.X, dir.Y)
-		if !g.IsInGraph(newPoint) {
+		newPoint := p.Shift(dir.GetX(), dir.GetY())
+		if !g.IsInGraph(newPoint) || g.IsBlocked(newPoint) {
 			continue
 		}
 		neighbors = append(neighbors, newPoint)
 	}
 	return neighbors
+}
+
+func (g *SimpleGraph) IsPointReachable(p Point) bool {
+	return g.IsInGraph(p) && !g.IsBlocked(p)
 }
 
 func (g *SimpleGraph) IsInGraph(p Point) bool {
@@ -70,6 +75,6 @@ func (g *SimpleGraph) IsVisited(p Point) bool {
 	return g.graph[p.GetX()][p.GetY()] == 1
 }
 
-func (g *SimpleGraph) GetEdgeWeight(from, to Point) int {
+func (g *SimpleGraph) Cost(from, to Point) int {
 	return 1
 }

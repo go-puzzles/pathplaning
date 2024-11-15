@@ -3,7 +3,7 @@ module github.com/go-puzzles/pathplaning
 go 1.23.3
 
 require (
-	github.com/go-puzzles/puzzles v1.1.3
+	github.com/go-puzzles/puzzles v1.1.5
 	github.com/stretchr/testify v1.9.0
 )
 
