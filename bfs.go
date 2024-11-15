@@ -15,21 +15,23 @@ import (
 )
 
 func BFSSearch(graph Graph, start, goal Point) ([]Point, error) {
-	if !graph.IsInGraph(start) || !graph.IsInGraph(goal) {
-		return nil, errors.New("start point or goal point is not in graph")
+	if !graph.IsPointReachable(goal) {
+		return nil, errors.New("goal point not reachable")
+	}
+
+	if !graph.IsPointReachable(start) {
+		return nil, errors.New("start point not reachable")
 	}
 
 	if start.Equals(goal) {
 		return []Point{start}, nil
 	}
 
-	parent := make(map[Point]Point)
-	totalWeight := make(map[Point]int)
+	cameFrom := make(map[Point]Point)
 
 	queue := pqueue.NewMemoryQueue[Point]()
 	queue.Enqueue(start)
 	graph.SetVisited(start)
-	totalWeight[start] = 0
 
 	for {
 		isEmpty, _ := queue.IsEmpty()
@@ -37,30 +39,26 @@ func BFSSearch(graph Graph, start, goal Point) ([]Point, error) {
 			break
 		}
 
-		point, _ := queue.Dequeue()
+		current, _ := queue.Dequeue()
 
-		if point.Equals(goal) {
+		if current.Equals(goal) {
 			path := []Point{}
-			current := point
-			for current != nil {
-				path = append([]Point{current}, path...)
-				current = parent[current]
+			way := current
+			for way != nil {
+				path = append([]Point{way}, path...)
+				way = cameFrom[way]
 			}
 			return path, nil
 		}
 
-		for _, n := range graph.Neighbors(point) {
-			if graph.IsBlocked(n) || graph.IsVisited(n) {
+		for _, next := range graph.Neighbors(current) {
+			if graph.IsVisited(next) {
 				continue
 			}
 
-			newWeight := totalWeight[point] + graph.GetEdgeWeight(point, n)
-			if _, exists := totalWeight[n]; !exists || newWeight > totalWeight[n] {
-				parent[n] = point
-				totalWeight[n] = newWeight
-				graph.SetVisited(n)
-				queue.Enqueue(n)
-			}
+			cameFrom[next] = current
+			graph.SetVisited(next)
+			queue.Enqueue(next)
 		}
 	}
 

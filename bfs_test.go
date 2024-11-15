@@ -95,10 +95,3 @@ func areAdjacent(p1, p2 Point) bool {
 	return (p1.GetX() == p2.GetX() && abs(p1.GetY()-p2.GetY()) == 1) ||
 		(p1.GetY() == p2.GetY() && abs(p1.GetX()-p2.GetX()) == 1)
 }
-
-func abs(x int) int {
-	if x < 0 {
-		return -x
-	}
-	return x
-}
