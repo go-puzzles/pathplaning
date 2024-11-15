@@ -26,8 +26,7 @@ var (
 )
 
 type SimpleGraph struct {
-	graph   [][]int
-	weights map[SimplePoint]map[SimplePoint]int
+	graph [][]int
 }
 
 func NewSimpleGraph(width, height int) *SimpleGraph {
@@ -35,8 +34,7 @@ func NewSimpleGraph(width, height int) *SimpleGraph {
 	for i := range graph {
 		graph[i] = make([]int, width)
 	}
-	weights := make(map[SimplePoint]map[SimplePoint]int)
-	return &SimpleGraph{graph: graph, weights: weights}
+	return &SimpleGraph{graph: graph}
 }
 
 func (g *SimpleGraph) Neighbors(p Point) []Point {
@@ -76,5 +74,30 @@ func (g *SimpleGraph) IsVisited(p Point) bool {
 }
 
 func (g *SimpleGraph) Cost(from, to Point) int {
-	return 1
+	return abs(from.GetX()-to.GetX()) + abs(from.GetY()-to.GetY())
+}
+
+func (g *SimpleGraph) PrintGraph(start, end Point, path []Point) {
+	for _, p := range path {
+		g.graph[p.GetX()][p.GetY()] = -100
+	}
+
+	for y := 0; y < len(g.graph); y++ {
+		for x := 0; x < len(g.graph[0]); x++ {
+			p := &SimplePoint{X: x, Y: y}
+			if p.Equals(start) {
+				print("S ")
+			} else if p.Equals(end) {
+				print("G ")
+			} else if g.IsBlocked(p) {
+				print("X ")
+			} else if g.graph[p.GetX()][p.GetY()] == -100 {
+				print("o ")
+			} else {
+				print(". ")
+			}
+		}
+		println()
+	}
+	println()
 }

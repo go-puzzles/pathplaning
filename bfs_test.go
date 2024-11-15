@@ -39,6 +39,7 @@ func TestBfs(t *testing.T) {
 	if !assert.Nil(t, err) {
 		return
 	}
+	graph.PrintGraph(start, goal, path)
 	t.Log(path)
 }
 
@@ -53,6 +54,7 @@ func TestBfsWithValidPath(t *testing.T) {
 		return
 	}
 	checkPass(t, start, goal, path)
+	graph.PrintGraph(start, goal, path)
 }
 
 func TestBfsWithOnePass(t *testing.T) {
@@ -71,6 +73,7 @@ func TestBfsWithOnePass(t *testing.T) {
 	}
 	t.Log(path)
 	checkPass(t, start, goal, path)
+	graph.PrintGraph(start, goal, path)
 }
 
 func TestBfsWithNoPath(t *testing.T) {
